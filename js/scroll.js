@@ -142,11 +142,37 @@
     });
   }
 
+  /* =========================================================
+     4. VOLTAR AO TOPO AO CLICAR NA LOGO DO CABECALHO
+     Rola suavemente ate o inicio da pagina e mantem a URL limpa
+     (sem o "#" no final).
+     ========================================================= */
+  function iniciarVoltarAoTopo() {
+    const logo = document.getElementById("logoTopo");
+
+    if (!logo) return;
+
+    logo.addEventListener("click", function (evento) {
+      evento.preventDefault();
+
+      window.scrollTo({
+        top: 0,
+        behavior: prefereSemMovimento ? "auto" : "smooth"
+      });
+
+      // Mantem a barra de enderecos limpa, sem o "#"
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState(null, "", window.location.pathname + window.location.search);
+      }
+    });
+  }
+
   /* ---------- Inicializacao ---------- */
   function iniciar() {
     iniciarRevelacao();
     iniciarParallax();
     iniciarNavegacaoSuave();
+    iniciarVoltarAoTopo();
   }
 
   if (document.readyState === "loading") {
