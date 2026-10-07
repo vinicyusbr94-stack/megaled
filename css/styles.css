@@ -1,0 +1,452 @@
+/* Estilos Especiais e Efeitos Visuais - Painel de LED Outdoor */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap');
+
+:root {
+  --primary: #3b82f6;
+  --primary-glow: rgba(59, 130, 246, 0.4);
+  --led-glow: rgba(56, 189, 248, 0.35);
+  --dark-bg: #090d16;
+  --card-bg: #111827;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--dark-bg);
+  color: #f3f4f6;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, .font-heading {
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+/* Efeito de Vidro / Glassmorphism */
+.glass-panel {
+  background: rgba(17, 24, 39, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-panel-hover:hover {
+  transform: translateY(-4px);
+  border-color: rgba(59, 130, 246, 0.4);
+  box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.5), 0 0 20px 2px var(--primary-glow);
+}
+
+/* Estrutura Realista do Painel de LED - formato VERTICAL */
+.outdoor-rig {
+  position: relative;
+  border-radius: 10px;
+  /* Flange de aco do painel */
+  background: linear-gradient(145deg, #4b5563, #1f2937 55%, #111827);
+  padding: 18px;
+  box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.85),
+              0 0 0 2px #0f172a,
+              0 0 0 5px #4b5563,
+              0 0 45px var(--led-glow);
+  transition: box-shadow 0.5s ease;
+}
+
+/* Bracos de fixacao nas laterais (como um painel de verdade) */
+.outdoor-rig::before,
+.outdoor-rig::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 74px;
+  background: linear-gradient(90deg, #111827, #6b7280, #111827);
+  border: 1px solid #0f172a;
+  border-radius: 4px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
+}
+.outdoor-rig::before { left: -18px; }
+.outdoor-rig::after { right: -18px; }
+
+.outdoor-rig.day-mode {
+  background: linear-gradient(145deg, #9ca3af, #4b5563 55%, #374151);
+  box-shadow: 0 24px 46px -12px rgba(0, 0, 0, 0.6),
+              0 0 0 2px #0f172a,
+              0 0 0 5px #9ca3af,
+              0 0 18px rgba(255, 255, 255, 0.12);
+}
+
+/* Tela do painel em proporcao VERTICAL (1080 x 1920) */
+.outdoor-screen {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  background: #000;
+  border-radius: 4px;
+  /* Bisel preto da moldura do modulo de LED */
+  box-shadow: inset 0 0 0 3px #000,
+              inset 0 0 0 5px #1f2937,
+              inset 0 0 24px rgba(0, 0, 0, 0.9);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Malha de Diodos do LED (Efeito Dot Pitch P3) */
+.led-pixel-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: 
+    radial-gradient(circle, rgba(0, 0, 0, 0.15) 1px, transparent 1px);
+  background-size: 4px 4px;
+  z-index: 10;
+  mix-blend-mode: multiply;
+  opacity: 0.6;
+}
+
+/* Efeito de Linhas de Varredura / Scanline sutil */
+.led-scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.25) 50%
+  );
+  background-size: 100% 4px;
+  z-index: 11;
+  opacity: 0.4;
+}
+
+/* Brilho Noturno de LED no ambiente */
+.led-screen-glow {
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 50px rgba(56, 189, 248, 0.2);
+  z-index: 12;
+  pointer-events: none;
+}
+
+/* Barra de Progresso da Inserção (15 segundos) */
+.progress-bar-glow {
+  height: 4px;
+  background: linear-gradient(90deg, #38bdf8, #3b82f6);
+  box-shadow: 0 0 10px #38bdf8;
+  transition: width 0.1s linear;
+}
+
+/* Pulsação do Marcador do Painel no Mapa */
+.map-pulse {
+  display: block;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #3b82f6;
+  cursor: pointer;
+  box-shadow: 0 0 0 rgba(59, 130, 246, 0.7);
+  animation: pulse-ring 1.8s infinite;
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 16px rgba(59, 130, 246, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
+}
+
+/* Modal de Checkout */
+.modal-overlay {
+  background-color: rgba(3, 7, 18, 0.8);
+  backdrop-filter: blur(8px);
+}
+
+/* Botão Flutuante de WhatsApp */
+.whatsapp-float {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background-color: #25d366;
+  color: white;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.4);
+  z-index: 50;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.whatsapp-float:hover {
+  transform: scale(1.1);
+  box-shadow: 0 12px 28px rgba(37, 211, 102, 0.6);
+}
+
+/* ============ HERO: Foto Real do Painel de LED como Fundo ============ */
+
+/* Altura da primeira secao: ocupa a tela inteira */
+.hero-secao {
+  min-height: 100vh;
+}
+
+/* Coluna do conteudo: texto no topo, metricas no fim da secao */
+.hero-conteudo {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding-top: 7rem;                        /* folga para o cabecalho fixo */
+  /* A margem inferior termina exatamente na borda da foto.
+     Usa o mesmo valor da elevacao, entao se a foto mudar, o marginamento
+     acompanha sozinho. ParaDifferent, ajuste so --hero-margem-final. */
+  padding-bottom: var(--hero-margem-final);
+}
+
+/* Empurra as metricas para o fim da secao e assobe sobre a foto de fundo.
+   Usa 'transform' (e nao margem negativa) de proposito: margem negativa
+   em flexbox empurraria o bloco para FORA da secao, que tem overflow:hidden,
+   e os cartoes seriam cortados.
+   O parallax entra junto no mesmo transform (translate3d) para nao
+   sobrescrever o ajuste de --hero-metricas-subida. */
+.hero-rodape {
+  margin-top: auto;
+  padding-top: 2.5rem;
+  position: relative;
+  z-index: 30;
+  transform:
+    translateY(calc(var(--hero-metricas-subida) * -1))
+    translate3d(0, var(--parallax-y, 0px), 0);
+  /* Apaga aos poucos conforme a secao sai de cena */
+  opacity: var(--parallax-fade, 1);
+  will-change: transform, opacity;
+}
+
+/* Em telas menores a secao volta ao tamanho natural */
+@media (max-width: 1024px) {
+  .hero-secao {
+    min-height: auto;
+  }
+  .hero-conteudo {
+    min-height: auto;
+    padding-top: 6rem;
+    padding-bottom: 2.5rem;
+  }
+  :root {
+    --hero-altura-foto: min(62vh, 620px);
+    --hero-foto-elevacao: 150px;
+  }
+}
+
+/* Ajuste estes valores para calibrar a foto, sem mexer no resto */
+:root {
+  --hero-brilho: 1.7;      /* clareia a foto (a imagem original e bem escura) */
+  --hero-contraste: 1.1;   /* define o contraste dos brilhos do LED */
+  --hero-saturacao: 1.2;   /* intensifica as cores da foto */
+  --hero-escurecimento: 0.45; /* 0 = sem escurecer | 1 = totalmente preto */
+  --hero-borrado: 55px;    /* desfoque do preenchimento lateral */
+  --hero-valor-borrado: 0.40; /* 0 = some | 1 = bem visivel */
+  --hero-altura-foto: min(78vh, 880px); /* altura da faixa com a foto inteira */
+  --hero-foto-elevacao: 0px;    /* foto encosta no fim da secao (sem faixa vazia) */
+  /* Margem inferior da secao = 0, para a secao terminar junto com a foto. */
+  --hero-margem-final: 0px;
+  /* As metricas ja caem naturalmente na borda da foto, porque o
+     padding-bottom da secao tem o mesmo valor da elevacao. */
+  --hero-metricas-subida: 0px; /* ajuste fino: 0 = na borda da foto */
+  --hero-foto-opacidade: 7%;   /* desvanecimento no topo | 0% = totalmente solida */
+}
+
+/* Camada 1a: foto borrada de fundo, bem suave, so para o hero nao ficar chapado */
+.hero-foto-borrada {
+  position: absolute;
+  inset: 0;
+  background-image: url('../img/projeto-painel-led.png');
+  background-size: cover;
+  background-position: center 60%;
+  background-repeat: no-repeat;
+  z-index: 0;
+  filter: blur(var(--hero-borrado)) brightness(calc(var(--hero-brilho) * 0.8));
+  transform: scale(1.2);
+  opacity: var(--hero-valor-borrado);
+}
+
+/* Camada 1b: a foto INTEIRA (relogio + painel visiveis), ancorada acima do rodape.
+   'contain' garante que nada seja cortado; as laterais vazias ficam
+   preenchidas pela camada borrada acima. */
+.hero-veu-fundo {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: var(--hero-foto-elevacao);
+  height: var(--hero-altura-foto);
+  z-index: 0;
+  background-image: url('../img/projeto-painel-led.png');
+  background-size: contain;         /* foto completa, sem corte */
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  filter: brightness(calc(var(--hero-brilho) * 1.15))
+          contrast(var(--hero-contraste))
+          saturate(var(--hero-saturacao));
+  /* Suaviza so a borda de cima, para a foto ficar mais solida/opaca */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 var(--hero-foto-opacidade));
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 var(--hero-foto-opacidade));
+}
+
+/* ---- Camada 2: escurecimento em gradiente (protege o texto no topo) ---- */
+.hero-overlay-escuro {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-image: linear-gradient(
+    to bottom,
+    rgba(9, 13, 22, 0.92) 0%,
+    rgba(9, 13, 22, 0.74) 38%,
+    rgba(9, 13, 22, calc(var(--hero-escurecimento) - 0.05)) 72%,
+    rgba(9, 13, 22, calc(var(--hero-escurecimento) - 0.12)) 100%
+  );
+}
+
+/* Camada 2b: sombra extra concentrada em cima do titulo, garantindo leitura */
+.hero-texto-escuro {
+  position: absolute;
+  left: 50%;
+  top: 6%;
+  transform: translateX(-50%);
+  width: min(1000px, 100%);
+  height: 60%;
+  z-index: 1;
+  pointer-events: none;
+  background-image: radial-gradient(ellipse at center top, rgba(9, 13, 22, 0.85) 0%, rgba(9, 13, 22, 0.45) 45%, transparent 72%);
+}
+
+/* Brilho azul suave por cima da foto, unificando com a identidade visual */
+.hero-brilho-azul {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  background-image:
+    radial-gradient(circle at 50% 30%, rgba(59, 130, 246, 0.20) 0%, transparent 55%),
+    radial-gradient(circle at 15% 85%, rgba(34, 211, 238, 0.12) 0%, transparent 45%);
+}
+
+/* Observacao: sem 'background-attachment: fixed' aqui de proposito.
+   A foto rola junto com a primeira secao, como pedido. */
+
+/* ============ EFEITOS DE SCROLL E PARALLAX ============ */
+
+/* Navegacao suave ao clicar nos links do menu */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ---------- 1. Revelacao dos blocos ao rolar ---------- */
+/* O elemento comeca invisivel e deslocado. Ao entrar na tela, recebe
+   a classe .reveal-visivel (adicionada pelo js/scroll.js) e faz a animacao. */
+[data-reveal] {
+  opacity: 0;
+  transition:
+    opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.85s ease;
+  will-change: opacity, transform;
+}
+
+[data-reveal="up"]    { transform: translate3d(0, 70px, 0); }
+[data-reveal="down"]  { transform: translate3d(0, -70px, 0); }
+[data-reveal="left"]  { transform: translate3d(-80px, 0, 0); }
+[data-reveal="right"] { transform: translate3d(80px, 0, 0); }
+[data-reveal="zoom"]  { transform: scale(0.9); }
+[data-reveal="blur"]  { transform: translate3d(0, 50px, 0); filter: blur(12px); }
+
+/* Estado final: elemento no lugar e totalmente visivel */
+[data-reveal].reveal-visivel {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+/* ---------- 2. Revelacao em cascata (filhos um a um) ---------- */
+/* Usado em grades de cards: cada filho entra com um atraso maior. */
+[data-reveal-stagger] > * {
+  opacity: 0;
+  transform: translate3d(0, 55px, 0);
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-reveal-stagger].reveal-visivel > * {
+  opacity: 1;
+  transform: none;
+}
+
+/* Atraso progressive (ate 12 filhos) */
+[data-reveal-stagger].reveal-visivel > *:nth-child(1)  { transition-delay: 0.05s; }
+[data-reveal-stagger].reveal-visivel > *:nth-child(2)  { transition-delay: 0.12s; }
+[data-reveal-stagger].reveal-visivel > *:nth-child(3)  { transition-delay: 0.19s; }
+[data-reveal-stagger].reveal-visivel > *:nth-child(4)  { transition-delay: 0.26s; }
+[data-reveal-stagger].reveal-visivel > *:nth-child(5)  { transition-delay: 0.33s; }
+[data-reveal-stagger].reveal-visivel > *:nth-child(6)  { transition-delay: 0.40s; }
+[data-reveal-stagger].reveal-visivel > *:nth-child(7)  { transition-delay: 0.47s; }
+[data-reveal-stagger].reveal-visivel > *:nth-child(8)  { transition-delay: 0.54s; }
+[data-reveal-stagger].reveal-visivel > *:nth-child(9)  { transition-delay: 0.61s; }
+[data-reveal-stagger].reveal-visivel > *:nth-child(10) { transition-delay: 0.68s; }
+[data-reveal-stagger].reveal-visivel > *:nth-child(11) { transition-delay: 0.75s; }
+[data-reveal-stagger].reveal-visivel > *:nth-child(12) { transition-delay: 0.82s; }
+
+/* ---------- 3. Parallax ---------- */
+/* O js/scroll.js escreve o deslocamento na variavel --parallax-y.
+   Usa translate3d para o movimento ficar na GPU (sem travamento). */
+[data-parallax] {
+  will-change: transform;
+  transform: translate3d(0, var(--parallax-y, 0px), 0);
+}
+
+/* Camadas decorativas que ja usam transform por outro motivo
+   (ex.: centralizacao com -50%) precisam do parallax junto. */
+[data-parallax].hero-brilho-azul {
+  transform: translate3d(0, var(--parallax-y, 0px), 0);
+}
+
+/* ---------- 4. Quem prefere menos movimento ---------- */
+/* Desliga tudo e mostra o conteudo normalmente. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  [data-reveal],
+  [data-reveal-stagger] > * {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
+  }
+  [data-parallax] {
+    transform: none !important;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #090d16;
+}
+::-webkit-scrollbar-thumb {
+  background: #1f2937;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #374151;
+}
