@@ -51,7 +51,7 @@ painel-led-outdoor/
 
 O arquivo [`js/mockData.js`](file:///C:/Users/Desktop/.gemini/antigravity/scratch/painel-led-outdoor/js/mockData.js) já está configurado com a localização real:
 
-- **Endereço Oficial:** Praça João Pinheiro, Número 20, Bairro Centro, Muriaé, Minas Gerais
+- **Endereço Oficial:** Praça João Pinheiro, Bairro Centro, Muriaé, Minas Gerais
 - **Ponto de Referência:** Em frente ao Relógio da Praça
 - **Coordenadas do Mapa:** Lat: `-21.13154`, Lng: `-42.36289` (Foco exato no Centro de Muriaé)
 - **WhatsApp:** Altere `'5511999999999'` para o seu número com DDD (ex: `'5532999998888'`).

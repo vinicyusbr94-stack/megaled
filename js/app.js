@@ -290,7 +290,7 @@ function alternarModoGoogleMaps(modo) {
     }
   } else {
     // Modo Mapa Tradicional com ruas, comércios e ponto ampliado (z=19)
-    iframe.src = `https://maps.google.com/maps?q=Pra%C3%A7a+Jo%C3%A3o+Pinheiro%2C+20%2C+Centro%2C+Muria%C3%A9+-+MG&t=&z=19&ie=UTF8&iwloc=&output=embed`;
+    iframe.src = `https://maps.google.com/maps?q=Pra%C3%A7a+Jo%C3%A3o+Pinheiro%2C+Centro%2C+Muria%C3%A9+-+MG&t=&z=19&ie=UTF8&iwloc=&output=embed`;
     
     if (btnMapa && btnSatelite) {
       btnMapa.classList.add("bg-blue-600", "text-white", "font-bold", "shadow-md");

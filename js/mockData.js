@@ -9,7 +9,7 @@ const CONFIG = {
     whatsapp: "5532987128882", // WhatsApp comercial: DDD 32 + número 98712-8882 (com prefixo 55)
     email: "comercial@megaledmidia.com.br",
     cidade: "Muriaé - MG",
-    pontoReferencia: "Praça João Pinheiro, Número 20, Bairro Centro, Muriaé, Minas Gerais",
+    pontoReferencia: "Praça João Pinheiro, Bairro Centro, Muriaé, Minas Gerais",
     pontoReferenciaDetalhe: "Em frente ao Relógio da Praça"
   },
 
