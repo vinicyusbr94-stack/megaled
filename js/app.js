@@ -434,7 +434,9 @@ function atualizarResumoCheckout() {
   if (totalPixValor) totalPixValor.innerText = `R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
 
   // Gerar QR Code Dinâmico via API aberta de QR Code
-  const pixCopiaCola = `00020126580014br.gov.bcb.pix0136${CONFIG.empresa.email}520400005303986540${valorTotal.toFixed(2)}5802BR5920${CONFIG.empresa.nome.substring(0, 20)}6009MURIAE62070503***6304`;
+  // Campo do nome do recebedor no padrao Pix precisa ter exatamente 20 caracteres
+  const nomeRecebedorPix = CONFIG.empresa.nome.substring(0, 20).toUpperCase().padEnd(20, ' ');
+  const pixCopiaCola = `00020126580014br.gov.bcb.pix0136${CONFIG.empresa.email}520400005303986540${valorTotal.toFixed(2)}5802BR5920${nomeRecebedorPix}6009MURIAE62070503***6304`;
   const qrImg = document.getElementById("qrCodePixImg");
   const inputPix = document.getElementById("inputPixCopiaCola");
 

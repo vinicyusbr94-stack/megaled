@@ -4,7 +4,7 @@
 const CONFIG = {
   // Informações do Proprietário / Empresa
   empresa: {
-    nome: "MegaLED Mídia Urbana",
+    nome: "3M Marketing",
     slogan: "Sua marca em alta definição no ponto mais nobre da cidade",
     whatsapp: "5532987128882", // WhatsApp comercial: DDD 32 + número 98712-8882 (com prefixo 55)
     email: "comercial@megaledmidia.com.br",
