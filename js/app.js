@@ -310,7 +310,6 @@ function initCheckout() {
   const tabCartaoBtn = document.getElementById("tabCartaoBtn");
   const formCheckout = document.getElementById("formCheckoutContratacao");
   const copiarPixBtn = document.getElementById("copiarPixBtn");
-  const simularPixPagoBtn = document.getElementById("simularPixPagoBtn");
   const checkCriacaoArte = document.getElementById("checkCriacaoArte");
 
   if (fecharModalBtn && modal) {
@@ -389,12 +388,6 @@ function initCheckout() {
       }
 
       concluirPedidoSucesso(false);
-    });
-  }
-
-  if (simularPixPagoBtn) {
-    simularPixPagoBtn.addEventListener("click", () => {
-      concluirPedidoSucesso();
     });
   }
 }
