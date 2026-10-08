@@ -108,6 +108,35 @@ const CONFIG = {
     }
   ],
 
+  // ============================================================
+  // PAGAMENTO ONLINE (Mercado Pago - "Link de Pagamento")
+  // ------------------------------------------------------------
+  // COMO CONFIGURAR (só precisa fazer uma vez):
+  //   1. Entre no painel do Mercado Pago: Cobranças > Link de pagamento
+  //   2. Crie 6 links, um para cada combinação:
+  //        Plano Mensal    + sem arte / com arte (+R$ 150)
+  //        Plano Semestral + sem arte / com arte (+R$ 150)
+  //        Plano Anual     + sem arte / com arte (+R$ 150)
+  //   3. Cole cada endereço abaixo, entre as aspas (ex: "https://mpago.la/xxxxx").
+  //   4. Troque "ativo: false" por "ativo: true".
+  //
+  // Enquanto estiver "ativo: false", o site mantém o fluxo atual
+  // (simulação + envio dos dados pelo WhatsApp) e nada quebra.
+  //
+  // Dica: no Mercado Pago, configure a URL de retorno (back_urls) para
+  // "https://3mmarketing.com.br" — o cliente volta para o seu site após pagar.
+  // ============================================================
+  pagamento: {
+    ativo: false, // mude para true depois de preencher os 6 links acima
+    gateway: "Mercado Pago",
+    valorCriacaoArte: 150.00, // taxa única da criação de arte
+    links: {
+      mensal:    { semArte: "", comArte: "" },
+      semestral: { semArte: "", comArte: "" },
+      anual:     { semArte: "", comArte: "" }
+    }
+  },
+
   // Exemplos de Artes para o Simulador
   // Os 12 ramos abaixo foram escolhidos com base nos seguimentos com maior
   // número de empresas abertas em Muriaé - MG (Zona da Mata Mineira),

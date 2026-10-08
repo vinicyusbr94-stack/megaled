@@ -367,11 +367,29 @@ function initCheckout() {
     });
   }
 
-  // Submissão do Formulário de Checkout (Cartão ou Simulação)
+  // Submissão do Formulário de Checkout
+  // - Se o Mercado Pago estiver configurado (CONFIG.pagamento.ativo = true),
+  //   abre o link de pagamento seguro do plano escolhido.
+  // - Caso contrário, mantém o fluxo de simulação atual (sem quebrar nada).
   if (formCheckout) {
     formCheckout.addEventListener("submit", (e) => {
       e.preventDefault();
-      concluirPedidoSucesso();
+
+      if (pagamentoOnlineConfigurado()) {
+        const plano = appState.planoSelecionado;
+        const link = obterLinkPagamento(plano.id, appState.opcaoCriacaoArte);
+
+        if (link) {
+          window.open(link, "_blank", "noopener");
+          concluirPedidoSucesso(true);
+          return;
+        }
+
+        // Ativo, mas o link deste plano/opção ainda não foi preenchido
+        alert("O link de pagamento desta opção ainda não foi configurado. Vamos seguir pelo WhatsApp para finalizar.");
+      }
+
+      concluirPedidoSucesso(false);
     });
   }
 
@@ -379,6 +397,54 @@ function initCheckout() {
     simularPixPagoBtn.addEventListener("click", () => {
       concluirPedidoSucesso();
     });
+  }
+}
+
+// 7.1 Confere se o pagamento online (Mercado Pago) está ligado
+function pagamentoOnlineConfigurado() {
+  const pag = CONFIG.pagamento;
+  return !!(pag && pag.ativo);
+}
+
+// 7.2 Descobre o link de pagamento do plano + opção de arte
+function obterLinkPagamento(planoId, comArte) {
+  const pag = CONFIG.pagamento;
+  if (!pag || !pag.ativo || !pag.links) return null;
+
+  const porPlano = pag.links[planoId];
+  if (!porPlano) return null;
+
+  const link = comArte ? porPlano.comArte : porPlano.semArte;
+  return (link && link.trim()) ? link.trim() : null;
+}
+
+// 7.3 Mostra o bloco do Mercado Pago OU o checkout de simulação
+function atualizarAreaPagamento() {
+  const areaMP = document.getElementById("areaMercadoPago");
+  const areaPix = document.getElementById("areaPixPagamento");
+  const areaCartao = document.getElementById("areaCartaoPagamento");
+  const abas = document.getElementById("abasPagamento");
+
+  if (!areaMP || !areaPix || !areaCartao) return;
+
+  const onlineAtivo = pagamentoOnlineConfigurado();
+
+  if (abas) abas.classList.toggle("hidden", onlineAtivo);
+
+  if (onlineAtivo) {
+    areaPix.classList.add("hidden");
+    areaCartao.classList.add("hidden");
+    areaMP.classList.remove("hidden");
+  } else {
+    areaMP.classList.add("hidden");
+    // Devolve o estado das abas (Pix visível por padrão)
+    if (appState.metodoPagamento === 'cartao') {
+      areaCartao.classList.remove("hidden");
+      areaPix.classList.add("hidden");
+    } else {
+      areaPix.classList.remove("hidden");
+      areaCartao.classList.add("hidden");
+    }
   }
 }
 
@@ -459,14 +525,38 @@ function atualizarResumoCheckout() {
       `;
     }
   }
+
+  // Valor exibido no bloco do Mercado Pago (quando ativo)
+  const mpTotalValor = document.getElementById("mpTotalValor");
+  if (mpTotalValor) mpTotalValor.innerText = `R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
+
+  // Decide entre pagamento online real (Mercado Pago) e a simulação
+  atualizarAreaPagamento();
 }
 
-function concluirPedidoSucesso() {
+function concluirPedidoSucesso(online) {
   const areaFormulario = document.getElementById("checkoutEtapasConteudo");
   const areaSucesso = document.getElementById("checkoutSucessoConteudo");
 
   if (areaFormulario) areaFormulario.classList.add("hidden");
   if (areaSucesso) areaSucesso.classList.remove("hidden");
+
+  // Quando o pagamento foi para o Mercado Pago, explica o próximo passo
+  if (online) {
+    const selo = document.getElementById("sucessoSelo");
+    const titulo = document.getElementById("sucessoTitulo");
+    const infoBox = document.getElementById("sucessoInfoBox");
+
+    if (selo) selo.innerText = "Pedido enviado para pagamento seguro";
+    if (titulo) titulo.innerText = "Finalize no Mercado Pago";
+    if (infoBox) {
+      infoBox.innerHTML = `
+        <div>• Seus dados foram registrados no nosso sistema.</div>
+        <div>• Conclua o pagamento na aba do <strong>Mercado Pago</strong> que foi aberta (Pix, cartão ou boleto).</div>
+        <div>• Depois, clique no botão abaixo para enviar sua arte pelo WhatsApp!</div>
+      `;
+    }
+  }
 
   const numPedido = "#LED-" + Math.floor(100000 + Math.random() * 900000);
   const pedidoNumeroEl = document.getElementById("sucessoNumPedido");
