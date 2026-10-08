@@ -368,16 +368,15 @@ function initCheckout() {
   }
 
   // Submissão do Formulário de Checkout
-  // - Se o Mercado Pago estiver configurado (CONFIG.pagamento.ativo = true),
-  //   abre o link de pagamento seguro do plano escolhido.
-  // - Caso contrário, mantém o fluxo de simulação atual (sem quebrar nada).
+  // - Cartão: abre o link do InfinitePay (com repasse de taxas) do plano escolhido.
+  // - Pix: o cliente paga pelo QR Code real gerado no site e confirma no WhatsApp.
   if (formCheckout) {
     formCheckout.addEventListener("submit", (e) => {
       e.preventDefault();
 
-      if (pagamentoOnlineConfigurado()) {
+      if (appState.metodoPagamento === 'cartao') {
         const plano = appState.planoSelecionado;
-        const link = obterLinkPagamento(plano.id, appState.opcaoCriacaoArte);
+        const link = obterLinkCartao(plano.id, appState.opcaoCriacaoArte);
 
         if (link) {
           window.open(link, "_blank", "noopener");
@@ -385,8 +384,8 @@ function initCheckout() {
           return;
         }
 
-        // Ativo, mas o link deste plano/opção ainda não foi preenchido
-        alert("O link de pagamento desta opção ainda não foi configurado. Vamos seguir pelo WhatsApp para finalizar.");
+        // Link desta opção ainda não foi colocado no CONFIG
+        alert("O link de pagamento com cartão ainda não foi configurado. Vamos finalizar pelo WhatsApp.");
       }
 
       concluirPedidoSucesso(false);
@@ -400,52 +399,62 @@ function initCheckout() {
   }
 }
 
-// 7.1 Confere se o pagamento online (Mercado Pago) está ligado
-function pagamentoOnlineConfigurado() {
-  const pag = CONFIG.pagamento;
-  return !!(pag && pag.ativo);
-}
+// 7.1 Descobre o link do InfinitePay para cartão (plano + opção de arte)
+function obterLinkCartao(planoId, comArte) {
+  const cartao = CONFIG.pagamento && CONFIG.pagamento.cartao;
+  if (!cartao || !cartao.links) return null;
 
-// 7.2 Descobre o link de pagamento do plano + opção de arte
-function obterLinkPagamento(planoId, comArte) {
-  const pag = CONFIG.pagamento;
-  if (!pag || !pag.ativo || !pag.links) return null;
-
-  const porPlano = pag.links[planoId];
+  const porPlano = cartao.links[planoId];
   if (!porPlano) return null;
 
   const link = comArte ? porPlano.comArte : porPlano.semArte;
   return (link && link.trim()) ? link.trim() : null;
 }
 
-// 7.3 Mostra o bloco do Mercado Pago OU o checkout de simulação
-function atualizarAreaPagamento() {
-  const areaMP = document.getElementById("areaMercadoPago");
-  const areaPix = document.getElementById("areaPixPagamento");
-  const areaCartao = document.getElementById("areaCartaoPagamento");
-  const abas = document.getElementById("abasPagamento");
+// 7.2 Geração de Pix "copia e cola" REAL (padrão BR Code do Banco Central)
+// O cliente paga o valor exato e o dinheiro cai direto na chave Pix
+// cadastrada em CONFIG.pagamento.chavePix. O QR nunca expira.
 
-  if (!areaMP || !areaPix || !areaCartao) return;
-
-  const onlineAtivo = pagamentoOnlineConfigurado();
-
-  if (abas) abas.classList.toggle("hidden", onlineAtivo);
-
-  if (onlineAtivo) {
-    areaPix.classList.add("hidden");
-    areaCartao.classList.add("hidden");
-    areaMP.classList.remove("hidden");
-  } else {
-    areaMP.classList.add("hidden");
-    // Devolve o estado das abas (Pix visível por padrão)
-    if (appState.metodoPagamento === 'cartao') {
-      areaCartao.classList.remove("hidden");
-      areaPix.classList.add("hidden");
-    } else {
-      areaPix.classList.remove("hidden");
-      areaCartao.classList.add("hidden");
+// CRC-16 (CCITT-FALSE) que fecha e valida o payload do Pix
+function calcularCRC16(payload) {
+  let crc = 0xFFFF;
+  for (let i = 0; i < payload.length; i++) {
+    crc ^= payload.charCodeAt(i) << 8;
+    for (let j = 0; j < 8; j++) {
+      crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) : (crc << 1);
+      crc &= 0xFFFF;
     }
   }
+  return crc.toString(16).toUpperCase().padStart(4, "0");
+}
+
+// Monta um campo EMV no formato TAG + tamanho (2 dígitos) + valor
+function campoEMV(tag, valor) {
+  const tamanho = String(valor.length).padStart(2, "0");
+  return tag + tamanho + valor;
+}
+
+// Gera o "copia e cola" (payload Pix) com o valor exato do checkout
+function gerarPixCopiaCola(valor) {
+  const chave = (CONFIG.pagamento && CONFIG.pagamento.chavePix) || "";
+  const nome = CONFIG.empresa.nome.substring(0, 25).toUpperCase();
+  const cidade = "MURIAE";
+  const valorExato = valor.toFixed(2);
+
+  const conta = campoEMV("26", campoEMV("00", "br.gov.bcb.pix") + campoEMV("01", chave));
+
+  const payloadSemCRC =
+    "000201" +                    // formato do payload
+    conta +                       // instruções Pix (chave da conta)
+    campoEMV("52", "0000") +      // categoria do comerciante
+    campoEMV("53", "986") +       // moeda (BRL)
+    campoEMV("54", valorExato) +  // valor exato a pagar
+    campoEMV("58", "BR") +        // país
+    campoEMV("59", nome) +        // nome do recebedor (máx. 25)
+    campoEMV("60", cidade) +      // cidade (máx. 15, sem acentos)
+    campoEMV("62", campoEMV("05", "***")); // txid estático
+
+  return payloadSemCRC + "6304" + calcularCRC16(payloadSemCRC + "6304");
 }
 
 function abrirCheckout() {
@@ -499,10 +508,8 @@ function atualizarResumoCheckout() {
   if (totalFinalModal) totalFinalModal.innerText = `R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
   if (totalPixValor) totalPixValor.innerText = `R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
 
-  // Gerar QR Code Dinâmico via API aberta de QR Code
-  // Campo do nome do recebedor no padrao Pix precisa ter exatamente 20 caracteres
-  const nomeRecebedorPix = CONFIG.empresa.nome.substring(0, 20).toUpperCase().padEnd(20, ' ');
-  const pixCopiaCola = `00020126580014br.gov.bcb.pix0136${CONFIG.empresa.email}520400005303986540${valorTotal.toFixed(2)}5802BR5920${nomeRecebedorPix}6009MURIAE62070503***6304`;
+  // Gerar QR Code Pix REAL (padrão BR Code do Banco Central)
+  const pixCopiaCola = gerarPixCopiaCola(valorTotal);
   const qrImg = document.getElementById("qrCodePixImg");
   const inputPix = document.getElementById("inputPixCopiaCola");
 
@@ -511,27 +518,10 @@ function atualizarResumoCheckout() {
     qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(pixCopiaCola)}`;
   }
 
-  // Preencher Opções de Parcelamento no Cartão
-  const selectParcelas = document.getElementById("cartaoParcelas");
-  if (selectParcelas) {
-    selectParcelas.innerHTML = '';
-    const maxParcelas = plano.meses === 1 ? 3 : 12;
-    for (let i = 1; i <= maxParcelas; i++) {
-      const valorParcela = (valorTotal / i).toFixed(2).replace('.', ',');
-      selectParcelas.innerHTML += `
-        <option value="${i}">
-          ${i}x de R$ ${valorParcela} ${i <= 3 ? 'sem juros' : '(com taxa do cartão)'}
-        </option>
-      `;
-    }
-  }
-
-  // Valor exibido no bloco do Mercado Pago (quando ativo)
-  const mpTotalValor = document.getElementById("mpTotalValor");
-  if (mpTotalValor) mpTotalValor.innerText = `R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
-
-  // Decide entre pagamento online real (Mercado Pago) e a simulação
-  atualizarAreaPagamento();
+  // Valor do plano que o cliente vê na área do cartão (InfinitePay)
+  // A taxa da operadora é repassada e exibida pelo próprio InfinitePay.
+  const cartaoValorPlano = document.getElementById("cartaoValorPlano");
+  if (cartaoValorPlano) cartaoValorPlano.innerText = `R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
 }
 
 function concluirPedidoSucesso(online) {
@@ -548,11 +538,11 @@ function concluirPedidoSucesso(online) {
     const infoBox = document.getElementById("sucessoInfoBox");
 
     if (selo) selo.innerText = "Pedido enviado para pagamento seguro";
-    if (titulo) titulo.innerText = "Finalize no Mercado Pago";
+    if (titulo) titulo.innerText = "Finalize no InfinitePay";
     if (infoBox) {
       infoBox.innerHTML = `
         <div>• Seus dados foram registrados no nosso sistema.</div>
-        <div>• Conclua o pagamento na aba do <strong>Mercado Pago</strong> que foi aberta (Pix, cartão ou boleto).</div>
+        <div>• Conclua o pagamento na aba do <strong>InfinitePay</strong> que foi aberta (cartão em até 12x).</div>
         <div>• Depois, clique no botão abaixo para enviar sua arte pelo WhatsApp!</div>
       `;
     }

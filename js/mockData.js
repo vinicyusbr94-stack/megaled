@@ -109,26 +109,24 @@ const CONFIG = {
   ],
 
   // ============================================================
-  // PAGAMENTO ONLINE (Mercado Pago - "Link de Pagamento")
+  // PAGAMENTO ONLINE
   // ------------------------------------------------------------
-  // COMO CONFIGURAR (só precisa fazer uma vez):
-  //   1. Entre no painel do Mercado Pago: Cobranças > Link de pagamento
-  //   2. Crie 6 links, um para cada combinação:
-  //        Plano Mensal    + sem arte / com arte (+R$ 150)
-  //        Plano Semestral + sem arte / com arte (+R$ 150)
-  //        Plano Anual     + sem arte / com arte (+R$ 150)
-  //   3. Cole cada endereço abaixo, entre as aspas (ex: "https://mpago.la/xxxxx").
-  //   4. Troque "ativo: false" por "ativo: true".
-  //
-  // Enquanto estiver "ativo: false", o site mantém o fluxo atual
-  // (simulação + envio dos dados pelo WhatsApp) e nada quebra.
-  //
-  // Dica: no Mercado Pago, configure a URL de retorno (back_urls) para
-  // "https://3mmarketing.com.br" — o cliente volta para o seu site após pagar.
-  // ============================================================
-  pagamento: {
-    ativo: false, // mude para true depois de preencher os 6 links acima
-    gateway: "Mercado Pago",
+  // 1) PIX (direto na sua conta, sem taxa):
+  //    O site gera um QR Code Pix REAL e válido (padrão do Banco
+  //    Central). O cliente paga o valor exato do plano e o dinheiro
+  //    cai direto na chave abaixo. Chave de celular sempre no
+  //    formato +55 + DDD + número.
+  chavePix: "+5532987128882",
+
+  // 2) CARTÃO (InfinitePay com "Repassando taxas"):
+  //    Crie 6 links no app InfinitePay (Vender > Link de Pagamento)
+  //    com a opção "Repassando taxas" ATIVADA. Assim o cliente paga
+  //    o plano + taxa e você recebe 100% do valor do plano.
+  //    Cole cada endereço abaixo (ex: "https://pay.infinitepay.app/xxxx").
+  //    Enquanto um link estiver vazio, o site orienta a finalizar
+  //    pelo WhatsApp — o fluxo nunca quebra.
+  cartao: {
+    gateway: "InfinitePay",
     valorCriacaoArte: 150.00, // taxa única da criação de arte
     links: {
       mensal:    { semArte: "", comArte: "" },
