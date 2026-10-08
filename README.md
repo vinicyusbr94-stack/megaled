@@ -1,4 +1,4 @@
-# 🚀 MegaLED | Plataforma de Venda e Gestão de Publicidade em Painel de LED Outdoor
+# 🚀 3M Marketing | Plataforma de Venda e Gestão de Publicidade em Painel de LED Outdoor
 
 Este é um projeto completo, moderno e 100% interativo desenvolvido para divulgar o seu **Painel de LED Outdoor**, demonstrar os benefícios para comerciantes e marcas locais, permitir a simulação visual da arte e fechar contratações com pagamento online (Pix e Cartão) diretamente pelo site.
 
@@ -33,33 +33,38 @@ painel-led-outdoor/
    - Destaque para o tempo de retenção do semáforo (60 segundos).
    - **Google Maps Oficial Integrado**: Visualização ampliada (Zoom 19x), alternador de visão normal e Satélite HD, além de botões para abrir mapa ampliado e traçar rota no Waze/GPS.
 
-3. **Planos & Descontos por Recorrência**:
-   - **Plano Mensal (1 Mês)**: R$ 900,00 / mês (180 ins/dia • 5.400 total)
-   - **Plano Semestral (6 Meses - 10% OFF)**: R$ 810,00 / mês (Total R$ 4.860,00 • Economia de R$ 540,00)
-   - **Plano Anual (12 Meses - 20% OFF)**: R$ 720,00 / mês (Total R$ 8.640,00 • Economia de R$ 2.160,00)
+3. **Planos & Descontos (cobrança do valor TOTAL do contrato à vista)**:
+   - **Plano Mensal (1 Mês)**: R$ 900,00 (equiv. R$ 900,00/mês • 300 ins/dia • 9.000/mês)
+   - **Plano Semestral (6 Meses - 10% OFF)**: R$ 4.860,00 (equiv. R$ 810,00/mês • Economia de R$ 540,00)
+   - **Plano Anual (12 Meses - 20% OFF)**: R$ 8.640,00 (equiv. R$ 720,00/mês • Economia de R$ 2.160,00)
+   - **Arte profissional (opcional)**: +R$ 150,00 (taxa única)
 
 4. **Checkout & Contratação Online Completa**:
    - Coleta de dados da empresa (Razão Social, CNPJ/CPF, WhatsApp, Responsável).
    - Opção de criação profissional de arte pela sua equipe (+R$ 150 taxa única).
-   - **Pagamento via Pix**: Gera QR Code instantâneo + código Pix Copia e Cola funcional.
-   - **Pagamento via Cartão de Crédito**: Formulário estilizado com parcelamento em até 12x.
-   - **Integração com WhatsApp**: Botão de confirmação que monta automaticamente a mensagem com número do pedido, plano e valores prontos para o anunciante te enviar no WhatsApp.
+   - **Pagamento via Pix**: Gera QR Code Pix REAL (padrão BR Code do Banco Central) + código Pix Copia e Cola válido — o dinheiro cai **direto na chave** `+55 32 98712-8882`, sem gateway e sem taxa.
+   - **Pagamento via Cartão**: Link do **InfinitePay** com a opção **"Repassando taxas"** ativada — o cliente paga o plano + taxa da operadora e você recebe **100% do valor do contrato**.
+   - **Confirmação manual**: a tela mostra "Pagamento em Confirmação"; o cliente envia o comprovante pelo **WhatsApp** (mensagem montada automaticamente com número do pedido, plano, forma de pagamento e valor) e a veiculação só é ativada **depois** de você conferir o pagamento na sua conta.
 
 ---
 
 ## ⚙️ Dados Configurados (Muriaé - MG)
 
-O arquivo [`js/mockData.js`](file:///C:/Users/Desktop/.gemini/antigravity/scratch/painel-led-outdoor/js/mockData.js) já está configurado com a localização real:
+O arquivo [`js/mockData.js`](js/mockData.js) já está configurado com a localização real:
 
 - **Endereço Oficial:** Praça João Pinheiro, Bairro Centro, Muriaé, Minas Gerais
 - **Ponto de Referência:** Em frente ao Relógio da Praça
 - **Coordenadas do Mapa:** Lat: `-21.13154`, Lng: `-42.36289` (Foco exato no Centro de Muriaé)
-- **WhatsApp:** Altere `'5511999999999'` para o seu número com DDD (ex: `'5532999998888'`).
-- **Preços dos Planos:** Altere `precoBaseDia` em cada plano conforme sua tabela.
+- **WhatsApp Comercial:** `5532987128882` (DDD 32 + 98712-8882) — é para onde o cliente envia o comprovante e onde você ativa a veiculação.
+- **E-mail:** `comercial@megaledmidia.com.br`
+- **Chave Pix:** `+5532987128882` (celular) — o QR Code gerado no site cai direto nesta conta.
+- **Cartão (InfinitePay):** os 6 links (3 planos × com/sem arte) ficam em `CONFIG.pagamento.cartao.links` e devem ser criados no app com "Repassando taxas" ativado.
+- **Preços dos Planos:** altere `precoMensal`, `precoTotal` e `descontoPercentual` em cada plano conforme sua tabela.
 
 ---
 
 ## 🌐 Como Executar e Visualizar o Site
 
-1. Você pode abrir o site imediatamente dando um **duplo clique no arquivo [`index.html`](file:///C:/Users/Desktop/.gemini/antigravity/scratch/painel-led-outdoor/index.html)** no Windows Explorer. Ele abrirá no seu navegador favorito (Chrome, Edge, Firefox, etc.).
-2. Para publicar o site na internet gratuitamente com seu próprio link, basta subir a pasta para o **Vercel**, **Netlify** ou **GitHub Pages**.
+1. Você pode abrir o site imediatamente dando um **duplo clique no arquivo `index.html`** no Windows Explorer — ele abrirá no seu navegador favorito (Chrome, Edge, Firefox, etc.).
+2. O site já está publicado em **https://3mmarketing.com.br** (GitHub Pages, com HTTPS ativo e redirecionamento automático de `http://`).
+3. Para republicar, basta enviar a pasta para o **Vercel**, **Netlify** ou **GitHub Pages**.
