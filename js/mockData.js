@@ -111,36 +111,38 @@ const CONFIG = {
   // ============================================================
   // PAGAMENTO ONLINE
   // ------------------------------------------------------------
-  // 1) PIX (direto na sua conta, sem taxa):
-  //    O site gera um QR Code Pix REAL e válido (padrão do Banco
-  //    Central). O cliente paga o valor exato do plano e o dinheiro
-  //    cai direto na chave abaixo. Chave de celular sempre no
-  //    formato +55 + DDD + número.
-  chavePix: "+5532987128882",
+  pagamento: {
+    // 1) PIX (direto na sua conta, sem taxa):
+    //    O site gera um QR Code Pix REAL e válido (padrão do Banco
+    //    Central). O cliente paga o valor exato do plano e o dinheiro
+    //    cai direto na chave abaixo. Chave de celular sempre no
+    //    formato +55 + DDD + número.
+    chavePix: "+5532987128882",
 
-  // 2) CARTÃO (InfinitePay com "Repassando taxas"):
-  //    Crie 6 links no app InfinitePay (Vender > Link de Pagamento)
-  //    com a opção "Repassando taxas" ATIVADA. Assim o cliente paga
-  //    o plano + taxa e você recebe 100% do valor do plano.
-  //    Cole cada endereço abaixo (ex: "https://pay.infinitepay.app/xxxx").
-  //    Enquanto um link estiver vazio, o site orienta a finalizar
-  //    pelo WhatsApp — o fluxo nunca quebra.
-  cartao: {
-    gateway: "InfinitePay",
-    valorCriacaoArte: 150.00, // taxa única da criação de arte
-    // Links criados no app InfinitePay com "Repassando taxas" ativado
-    links: {
-      mensal: {
-        semArte: "https://link.infinitepay.io/marcosvinicyus/VC1D-eFaJbHSv92-900,00",
-        comArte: "https://link.infinitepay.io/marcosvinicyus/VC1D-NmPy44C8yI-1050,00"
-      },
-      semestral: {
-        semArte: "https://link.infinitepay.io/marcosvinicyus/VC1D-gbZzRMSygH-4860,00",
-        comArte: "https://link.infinitepay.io/marcosvinicyus/VC1D-lwXoYgdH9a-5010,00"
-      },
-      anual: {
-        semArte: "https://link.infinitepay.io/marcosvinicyus/VC1D-ylsk7yswXK-8640,00",
-        comArte: "https://link.infinitepay.io/marcosvinicyus/VC1D-uPd5fGNgtG-8790,00"
+    // 2) CARTÃO (InfinitePay com "Repassando taxas"):
+    //    Crie 6 links no app InfinitePay (Vender > Link de Pagamento)
+    //    com a opção "Repassando taxas" ATIVADA. Assim o cliente paga
+    //    o plano + taxa e você recebe 100% do valor do plano.
+    //    Cole cada endereço abaixo (ex: "https://pay.infinitepay.app/xxxx").
+    //    Enquanto um link estiver vazio, o site orienta a finalizar
+    //    pelo WhatsApp — o fluxo nunca quebra.
+    cartao: {
+      gateway: "InfinitePay",
+      valorCriacaoArte: 150.00, // taxa única da criação de arte
+      // Links criados no app InfinitePay com "Repassando taxas" ativado
+      links: {
+        mensal: {
+          semArte: "https://link.infinitepay.io/marcosvinicyus/VC1D-eFaJbHSv92-900,00",
+          comArte: "https://link.infinitepay.io/marcosvinicyus/VC1D-NmPy44C8yI-1050,00"
+        },
+        semestral: {
+          semArte: "https://link.infinitepay.io/marcosvinicyus/VC1D-gbZzRMSygH-4860,00",
+          comArte: "https://link.infinitepay.io/marcosvinicyus/VC1D-lwXoYgdH9a-5010,00"
+        },
+        anual: {
+          semArte: "https://link.infinitepay.io/marcosvinicyus/VC1D-ylsk7yswXK-8640,00",
+          comArte: "https://link.infinitepay.io/marcosvinicyus/VC1D-uPd5fGNgtG-8790,00"
+        }
       }
     }
   },

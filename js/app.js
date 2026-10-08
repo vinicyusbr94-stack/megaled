@@ -531,34 +531,22 @@ function concluirPedidoSucesso(online) {
   if (areaFormulario) areaFormulario.classList.add("hidden");
   if (areaSucesso) areaSucesso.classList.remove("hidden");
 
-  // Quando o pagamento foi para o Mercado Pago, explica o próximo passo
-  if (online) {
-    const selo = document.getElementById("sucessoSelo");
-    const titulo = document.getElementById("sucessoTitulo");
-    const infoBox = document.getElementById("sucessoInfoBox");
-
-    if (selo) selo.innerText = "Pedido enviado para pagamento seguro";
-    if (titulo) titulo.innerText = "Finalize no InfinitePay";
-    if (infoBox) {
-      infoBox.innerHTML = `
-        <div>• Seus dados foram registrados no nosso sistema.</div>
-        <div>• Conclua o pagamento na aba do <strong>InfinitePay</strong> que foi aberta (cartão em até 12x).</div>
-        <div>• Depois, clique no botão abaixo para enviar sua arte pelo WhatsApp!</div>
-      `;
-    }
-  }
-
   const numPedido = "#LED-" + Math.floor(100000 + Math.random() * 900000);
   const pedidoNumeroEl = document.getElementById("sucessoNumPedido");
   if (pedidoNumeroEl) pedidoNumeroEl.innerText = numPedido;
 
-  // Montar link para envio dos dados no WhatsApp
+  // IMPORTANTE: a veiculação só é ativada DEPOIS do pagamento confirmado
+  // na nossa conta. Por isso o botão leva direto ao WhatsApp para o cliente
+  // enviar o comprovante — quem confirma o pagamento somos nós.
   const btnWhats = document.getElementById("btnConfirmarWhatsApp");
   if (btnWhats) {
     const nomeCliente = document.getElementById("inputNomeAnunciante")?.value || "Anunciante";
     const empresaCliente = document.getElementById("inputEmpresaAnunciante")?.value || "Minha Empresa";
     const plano = appState.planoSelecionado;
     const valorFinal = plano.precoTotal + (appState.opcaoCriacaoArte ? 150 : 0);
+    const formaPagamento = online
+      ? "Cartão de crédito (link do InfinitePay)"
+      : "Pix (QR Code do site)";
 
     const mensagemWhats = encodeURIComponent(
       `Olá! Acabei de contratar publicidade no Painel de LED da Praça João Pinheiro (Muriaé) pelo site!\n\n` +
@@ -568,8 +556,9 @@ function concluirPedidoSucesso(online) {
       `*Plano:* ${plano.nome} (${plano.meses} ${plano.meses === 1 ? 'Mês' : 'Meses'})\n` +
       `*Mensalidade Equivalente:* R$ ${plano.precoMensal.toFixed(2).replace('.', ',')} / mês\n` +
       `*Desconto Aplicado:* ${plano.descontoPercentual > 0 ? plano.descontoPercentual + '% OFF' : 'Tabela base'}\n` +
+      `*Forma de Pagamento:* ${formaPagamento}\n` +
       `*Valor Total do Contrato:* R$ ${valorFinal.toFixed(2).replace('.', ',')}\n\n` +
-      `Envio o comprovante para ativarmos a veiculação!`
+      `Segue o comprovante do pagamento para confirmarem a ativação da veiculação!`
     );
 
     btnWhats.href = `https://wa.me/${CONFIG.empresa.whatsapp}?text=${mensagemWhats}`;
