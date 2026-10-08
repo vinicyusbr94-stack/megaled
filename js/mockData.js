@@ -128,10 +128,20 @@ const CONFIG = {
   cartao: {
     gateway: "InfinitePay",
     valorCriacaoArte: 150.00, // taxa única da criação de arte
+    // Links criados no app InfinitePay com "Repassando taxas" ativado
     links: {
-      mensal:    { semArte: "", comArte: "" },
-      semestral: { semArte: "", comArte: "" },
-      anual:     { semArte: "", comArte: "" }
+      mensal: {
+        semArte: "https://link.infinitepay.io/marcosvinicyus/VC1D-eFaJbHSv92-900,00",
+        comArte: "https://link.infinitepay.io/marcosvinicyus/VC1D-NmPy44C8yI-1050,00"
+      },
+      semestral: {
+        semArte: "https://link.infinitepay.io/marcosvinicyus/VC1D-gbZzRMSygH-4860,00",
+        comArte: "https://link.infinitepay.io/marcosvinicyus/VC1D-lwXoYgdH9a-5010,00"
+      },
+      anual: {
+        semArte: "https://link.infinitepay.io/marcosvinicyus/VC1D-ylsk7yswXK-8640,00",
+        comArte: "https://link.infinitepay.io/marcosvinicyus/VC1D-uPd5fGNgtG-8790,00"
+      }
     }
   },
 
